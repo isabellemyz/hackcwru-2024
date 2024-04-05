@@ -1,4 +1,3 @@
-'''
 from pydantic import BaseModel
 from fastapi import FastAPI, File, UploadFile
 from typing import List
@@ -96,4 +95,3 @@ async def process_audio(audio_data: AudioInput):
        "clarity": clarity_score,
        "improvement": improvement
    }
-'''
