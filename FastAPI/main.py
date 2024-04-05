@@ -4,7 +4,9 @@ from typing import List
 import librosa
 import numpy as np
 import joblib
-from sklearn_porter import Porter
+#from sklearn_porter import Porter
+
+from typing import Any
 
 
 app = FastAPI()
@@ -12,11 +14,12 @@ app = FastAPI()
 
 # Define input model for audio data
 class AudioInput(BaseModel):
-   audio: bytes
+   #audio: bytes
+   audio: Any
 
 
 # Load the pretrained model
-model = joblib.load('/Users/tanujkannan/Vocally/vocally_model_decisionTree.joblib')
+model = joblib.load('/Users/isabellez/vocally-project/decision_tree_model.joblib')
 
 
 # Function to extract features from audio
