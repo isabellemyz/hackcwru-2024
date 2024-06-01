@@ -1,9 +1,12 @@
+import http
+from http.client import HTTPException
 from pydantic import BaseModel
 from fastapi import FastAPI, File, UploadFile
 from typing import List
 import librosa
 import numpy as np
 import joblib
+from fastapi.middleware.cors import CORSMiddleware
 #from sklearn_porter import Porter
 
 from typing import Any
@@ -14,8 +17,8 @@ app = FastAPI()
 
 # Define input model for audio data
 class AudioInput(BaseModel):
-   #audio: bytes
-   audio: Any
+   audio: bytes
+   #audio: Any
 
 
 # Load the pretrained model
@@ -64,37 +67,68 @@ def extract_features(audio_path):
        'contrast_std': np.sum(contrast_std),
        'zcr_mean': zcr_mean,
        'zcr_std': zcr_std
-   }
+    }
 
 
    return extracted_features
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Update with your frontend URL
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
+
+# API endpoint for process audio
+@app.get("/process_audio")
+async def get_process_audio():
+    return {"message": "Hello, world!"}
 
 # API endpoint to process uploaded audio
 @app.post("/process_audio")
 async def process_audio(audio_data: AudioInput):
-   # Save the uploaded audio file
-   with open("uploaded_audio.wav", "wb") as audio_file:
-       audio_file.write(audio_data.audio)
+   try:
+    # Save the uploaded audio file
+    with open("uploaded_audio.wav", "wb") as audio_file:
+        audio_file.write(audio_data.audio)
 
 
-   # Extract features from the uploaded audio
-   extracted_features = extract_features("uploaded_audio.wav")
+    # Extract features from the uploaded audio
+    extracted_features = extract_features("uploaded_audio.wav")
 
 
-   # Make predictions using the model
-   prediction = model.predict(np.array([list(extracted_features.values())]))
+    # Make predictions using the model
+    prediction = model.predict(np.array([list(extracted_features.values())]))
 
 
-   # Process the prediction result as needed
-   confidence_score = prediction[0][0]
-   clarity_score = prediction[0][1]
-   improvement = ""
+    # Process the prediction result as needed
+    confidence_score = prediction[0][0]
+    clarity_score = prediction[0][1]
+    improvement = ""
 
 
-   # Return the analysis result
-   return {
-       "confidence": confidence_score,
-       "clarity": clarity_score,
-       "improvement": improvement
-   }
+    # Return the analysis result
+    return {
+        "confidence": confidence_score,
+        "clarity": clarity_score,
+        "improvement": improvement
+    }
+   except Exception as e:
+        # Handle the error gracefully
+        print("Error writing audio file:", e)
+        # Optionally, raise an HTTPException to return an error response to the client
+        raise HTTPException(status_code=500, detail="Error processing audio")
+
+@app.post("/proxy")
+async def proxy(request: dict):
+    try:
+        url = request.get("url")
+        data = request.get("data")
+        
+        async with http.AsyncClient() as client:
+            response = await client.post(url, data=data)
+        
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

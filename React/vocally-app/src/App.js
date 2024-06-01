@@ -7,39 +7,42 @@ function App() {
 
    const handleAudioRecording = async () => {
        try {
-           const mediaRecorder = new MediaRecorder({ audio: true });
-           const chunks = [];
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mediaRecorder = new MediaRecorder(stream);
+
+          // const mediaRecorder = new MediaRecorder({ audio: true });
+          const chunks = [];
 
 
-           mediaRecorder.addEventListener('dataavailable', (event) => {
-               if (event.data.size > 0) {
-                   chunks.push(event.data);
-               }
-           });
+          mediaRecorder.addEventListener('dataavailable', (event) => {
+              if (event.data.size > 0) {
+                  chunks.push(event.data);
+              }
+          });
 
 
-           mediaRecorder.addEventListener('stop', async () => {
-               const blob = new Blob(chunks, { type: 'audio/wav' });
-               setAudioFile(blob);
+          mediaRecorder.addEventListener('stop', async () => {
+              const blob = new Blob(chunks, { type: 'audio/wav' });
+              setAudioFile(blob);
 
 
-               const formData = new FormData();
-               formData.append('audio', blob);
+              const formData = new FormData();
+              formData.append('audio', blob);
 
 
-               const response = await axios.post('http://localhost:8000/process_audio', formData, {
-                   headers: {
-                       'Content-Type': 'multipart/form-data',
-                   },
-               });
+              const response = await axios.post('http://localhost:8000/process_audio', formData, {
+                  headers: {
+                      'Content-Type': 'multipart/form-data',
+                  },
+              });
 
 
-               setAnalysisResult(response.data);
-           });
+              setAnalysisResult(response.data);
+          });
 
 
-           mediaRecorder.start();
-           setTimeout(() => mediaRecorder.stop(), 3000); // Record for 3 seconds
+          mediaRecorder.start();
+          setTimeout(() => mediaRecorder.stop(), 3000); // Record for 3 seconds
        } catch (error) {
            console.error('Error recording audio:', error);
        }
