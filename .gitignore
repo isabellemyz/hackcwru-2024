@@ -1,5 +1,7 @@
 # virtual environment
 /venv/
+/env/
 /.env
+/requirements_iz.txt
 
 
