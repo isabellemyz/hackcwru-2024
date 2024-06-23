@@ -5,3 +5,6 @@
 /requirements_iz.txt
 
 
+__pycache__/
+*.pyc
+*.pyo
