@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { ReactMediaRecorder } from "react-media-recorder";
 
-const AudioRecorder = ({ addMessage }) => {
+const AudioRecorder = ({ addMessage, clearMessages }) => {
   const handleStop = async (blobUrl, blob) => {
     const formData = new FormData();
     formData.append("file", blob, "audio.wav");
@@ -37,6 +37,17 @@ const AudioRecorder = ({ addMessage }) => {
     }
   };
 
+  const refresh = async () => {
+    try {
+      await axios.delete("http://localhost:8000/clear_response");
+      clearMessages();
+      addMessage({ type: 'bot', text: "Conversation history has been cleared."});
+    } catch (error) {
+      console.error("Error clearing response:", error);
+      addMessage({ type: 'bot', text: "Error clearing response." });
+    }
+  }
+
   return (
     <ReactMediaRecorder
       audio
@@ -45,6 +56,7 @@ const AudioRecorder = ({ addMessage }) => {
           <p>{status}</p>
           <button onClick={startRecording} className="recording-button">Recording</button>
           <button onClick={stopRecording} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2">Stop Recording</button>
+          <button onClick={refresh} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2">Refresh</button>
         </>
       )}
       onStop={handleStop}

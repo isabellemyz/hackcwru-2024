@@ -10,6 +10,7 @@ import os
 
 from processing.audio_input import record_audio, transcribe_audio
 from processing.model_input import get_response
+from processing.model_input import conversation_history
 
 load_dotenv()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -35,6 +36,9 @@ class TranscriptionResponse(BaseModel):
 
 class ModelResponse(BaseModel):
     response: str
+
+class ClearResponse(BaseModel):
+    response: list[dict[str, str]]
 
 app = FastAPI()
 
@@ -71,6 +75,12 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
 async def get_response_endpoint(request: TextOutput):
     response = get_response(request.text, client)
     return ModelResponse(response=response)
+
+@app.delete("/clear_response")
+async def clear_response():
+    conversation_history = [{"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}]
+    # return ClearResponse(response = conversation_history)
+    return None
 
 if __name__ == "__main__":
     import uvicorn

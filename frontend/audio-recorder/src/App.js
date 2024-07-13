@@ -11,12 +11,17 @@ const App = () => {
     setMessages(prevMessages => [...prevMessages, msg]);
   };
 
+  // Function to clear all messages
+  const clearMessages = () => {
+    setMessages([]);
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <h1 className="text-2xl font-bold">Vocally </h1>
         <ChatInterface messages={messages} />
-        <AudioRecorder addMessage={addMessage} />
+        <AudioRecorder addMessage={addMessage} clearMessages={clearMessages}/>
       </header>
     </div>
   );

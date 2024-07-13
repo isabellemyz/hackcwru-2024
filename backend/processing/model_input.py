@@ -2,6 +2,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
+global conversation_history
+
 conversation_history = [
     {"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}
 ]
