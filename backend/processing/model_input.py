@@ -5,8 +5,6 @@ import tiktoken
 
 global exceed_context_length
 
-global conversation_history
-
 exceed_context_length = False
 
 conversation_history = [
@@ -35,22 +33,26 @@ def get_response(user_input, client):
     print(conversation_history)
     return response.choices[0].message.content
 
-def num_tokens(history, model_name) -> int:
-    """Returns the number of tokens in a text string."""
-    encoding = tiktoken.encoding_for_model(model_name)
-    conversation_string = ""
-    
-    for dictionary in history:
-        for key in dictionary.keys():
-            conversation_string += dictionary[key]
-    
-    print('convo string', conversation_string)
-    
-    num_tokens = len(encoding.encode(conversation_string))
+def clear_response():
+    conversation_history = [{"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}]
 
-    print('num tokens', num_tokens)
 
-    return num_tokens
+# def num_tokens(history, model_name) -> int:
+#     """Returns the number of tokens in a text string."""
+#     encoding = tiktoken.encoding_for_model(model_name)
+#     conversation_string = ""
+    
+#     for dictionary in history:
+#         for key in dictionary.keys():
+#             conversation_string += dictionary[key]
+    
+#     print('convo string', conversation_string)
+    
+#     num_tokens = len(encoding.encode(conversation_string))
+
+#     print('num tokens', num_tokens)
+
+#     return num_tokens
 
 # if __name__ == "__main__":
 #     test_history = [{"role": "assistant", "content": "content 1"}, {"role": "system", "content": "content 2", "hint": "hint!!!"}]
