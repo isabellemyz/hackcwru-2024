@@ -1,58 +1,41 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-import tiktoken
+from processing.conversation import Conversation
 
-global exceed_context_length
+context_length = 128000
 
-exceed_context_length = False
+conversation = Conversation()
 
-conversation_history = [
-    {"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}
-]
-
-'''
-conversation_history = [
-    {"role": "system", "content": "You are a helpful assistant."}
-]
-'''
 
 # Function to interact with ChatGPT
 def get_response(user_input, client):
     # Append the user input to the conversation history
-    conversation_history.append({"role": "user", "content": user_input})
+    # conversation_history.append({"role": "user", "content": user_input})
+    conversation.add_message("user", user_input)
     
     # Call the OpenAI API with the conversation history
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
-        messages=conversation_history
+        model="gpt-3.5-turbo",
+        messages=conversation.history
     )
     
-    #print(response['choices'][0]['message']['content'])
-    conversation_history.append({"role": "assistant", "content": response.choices[0].message.content})
-    print(conversation_history)
+    # conversation_history.append({"role": "assistant", "content": response.choices[0].message.content})
+    conversation.add_message("assistant", response.choices[0].message.content)
+    print(conversation.history)
+
+    total_tokens = conversation.get_total_tokens()
+    
+    # if total_tokens > context_length:
+        # summary model
+    # print(total_tokens)
+    
+    
     return response.choices[0].message.content
 
-def clear_response():
-    conversation_history = [{"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}]
-
-
-# def num_tokens(history, model_name) -> int:
-#     """Returns the number of tokens in a text string."""
-#     encoding = tiktoken.encoding_for_model(model_name)
-#     conversation_string = ""
-    
-#     for dictionary in history:
-#         for key in dictionary.keys():
-#             conversation_string += dictionary[key]
-    
-#     print('convo string', conversation_string)
-    
-#     num_tokens = len(encoding.encode(conversation_string))
-
-#     print('num tokens', num_tokens)
-
-#     return num_tokens
+def refresh_chat():
+    conversation.clear()
+    print(conversation.get_total_tokens())
 
 # if __name__ == "__main__":
 #     test_history = [{"role": "assistant", "content": "content 1"}, {"role": "system", "content": "content 2", "hint": "hint!!!"}]

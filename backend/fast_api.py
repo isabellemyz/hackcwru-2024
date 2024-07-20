@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 
 from processing.audio_input import record_audio, transcribe_audio
-from processing.model_input import get_response, clear_response
+from processing.model_input import get_response, refresh_chat
 
 load_dotenv()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -79,7 +79,7 @@ async def get_response_endpoint(request: TextOutput):
 async def clear_response():
     # conversation_history = [{"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}]
     # return ClearResponse(response = conversation_history)
-    clear_response()
+    refresh_chat()
     return None
 
 if __name__ == "__main__":
