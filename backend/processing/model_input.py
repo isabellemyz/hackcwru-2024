@@ -11,24 +11,19 @@ conversation = Conversation()
 # Function to interact with ChatGPT
 def get_response(user_input, client):
     # Append the user input to the conversation history
-    # conversation_history.append({"role": "user", "content": user_input})
     conversation.add_message("user", user_input)
     
     # Call the OpenAI API with the conversation history
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=conversation.history
+        messages=conversation.history,
+        response_format={ "type": "json_object" } # this makes it return only one JSON key-value
     )
-    
-    # conversation_history.append({"role": "assistant", "content": response.choices[0].message.content})
+
     conversation.add_message("assistant", response.choices[0].message.content)
     print(conversation.history)
 
     total_tokens = conversation.get_total_tokens()
-    
-    # if total_tokens > context_length:
-        # summary model
-    # print(total_tokens)
     
     
     return response.choices[0].message.content
