@@ -29,7 +29,11 @@ const AudioRecorder = ({ addMessage, clearMessages }) => {
       const result = await axios.post("http://localhost:8000/get_response", {
         text: transcription
       });
-      const aiResponse = result.data.response;  // Extract the response message
+
+      const jsonObject = JSON.parse(result.data.response);
+      const key = Object.keys(jsonObject)[0];
+      const aiResponse = jsonObject[key];
+
       addMessage({ type: 'bot', text: aiResponse });  // Display the AI response in the UI
     } catch (error) {
       console.error("Error getting response:", error);
