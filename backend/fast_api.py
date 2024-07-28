@@ -77,8 +77,6 @@ async def get_response_endpoint(request: TextOutput):
 
 @app.delete("/clear_response")
 async def clear_response():
-    # conversation_history = [{"role": "system", "content": "You are a tech interviewer helper you must help the interviewee. Output your response in JSON"}]
-    # return ClearResponse(response = conversation_history)
     refresh_chat()
     return None
 

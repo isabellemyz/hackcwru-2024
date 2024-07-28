@@ -31,8 +31,3 @@ def get_response(user_input, client):
 def refresh_chat():
     conversation.clear()
     print(conversation.get_total_tokens())
-
-# if __name__ == "__main__":
-#     test_history = [{"role": "assistant", "content": "content 1"}, {"role": "system", "content": "content 2", "hint": "hint!!!"}]
-
-#     num_tokens(test_history, "gpt-3.5-turbo-0125")
