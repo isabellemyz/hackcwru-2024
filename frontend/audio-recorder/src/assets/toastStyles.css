@@ -1,0 +1,25 @@
+.Toastify__toast-icon {
+    color: #333; 
+  }
+  
+  .Toastify__toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .Toastify__toast--success .Toastify__toast-icon {
+    color: #2c3e50; 
+  }
+  
+  .Toastify__toast--error .Toastify__toast-icon {
+    color: #c0392b; 
+  }
+  
+  .Toastify__toast--info .Toastify__toast-icon {
+    color: #2980b9; 
+  }
+  
+  .Toastify__toast--warning .Toastify__toast-icon {
+    color: #f39c12; 
+  }
+  

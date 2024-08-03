@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect }  from 'react';
 import axios from 'axios';
 import { ReactMediaRecorder } from "react-media-recorder";
+import * as toastConfig from './toastConfig';
+
 
 const AudioRecorder = ({ addMessage, clearMessages }) => {
+
+  const [offensiveWords, setOffensiveWords] = useState([]);
+
+  useEffect(() => {
+    // Fetch offensive words from the configuration file
+    const fetchOffensiveWords = async () => {
+      try {
+        const response = await axios.get('/offensiveWords.json');
+        setOffensiveWords(response.data.offensiveWords);
+      } catch (error) {
+        console.error("Error fetching offensive words:", error);
+      }
+    };
+
+    fetchOffensiveWords();
+  }, []);
+
   const handleStop = async (blobUrl, blob) => {
     const formData = new FormData();
     formData.append("file", blob, "audio.wav");
@@ -15,6 +34,20 @@ const AudioRecorder = ({ addMessage, clearMessages }) => {
         },
       });
       const transcription = transcribeResponse.data.transcription;
+
+      // Empty Input Validation
+      if (!transcription.trim()) {
+        toastConfig.showToast("Input cannot be empty!", 'error');
+        return;
+      }
+
+      // Offensive Words Validation
+      const containsOffensiveWords = offensiveWords.some(word => transcription.toLowerCase().includes(word));
+      if (containsOffensiveWords) {
+        toastConfig.showToast("Inappropriate language and cannot be processed.", 'error');
+        return;
+      }
+
       addMessage({ type: 'user', text: transcription });  // Display the transcription in the UI
       getResponse(transcription);
     } catch (error) {
