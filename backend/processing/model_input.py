@@ -13,6 +13,8 @@ def get_response(user_input, client):
     # Append the user input to the conversation history
     conversation.add_message("user", user_input)
     
+    conversation.check_token_threshold(client)
+
     # Call the OpenAI API with the conversation history
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
