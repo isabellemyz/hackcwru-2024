@@ -28,7 +28,7 @@ class Conversation:
         # Create a prompt from the conversation history
         prompt = "\n".join([f"{msg['role']}: {msg['content']}" for msg in self.history])
         
-        print(prompt)
+        print("Prompt",prompt)
         # Ask the model for a summary
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -44,7 +44,7 @@ class Conversation:
         
         # Clear history and add summary as new history
         self.clear()
-        self.add_message("system", "Conversation summarized")
+        self.add_message("system", "Below is a summarized conversation.")
         self.add_message("assistant", summary)
         
         return summary

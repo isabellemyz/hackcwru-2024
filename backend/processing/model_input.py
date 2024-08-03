@@ -13,7 +13,6 @@ def get_response(user_input, client):
     # Append the user input to the conversation history
     conversation.add_message("user", user_input)
     
-    conversation.check_token_threshold(client)
 
     # Call the OpenAI API with the conversation history
     response = client.chat.completions.create(
@@ -23,13 +22,11 @@ def get_response(user_input, client):
     )
 
     conversation.add_message("assistant", response.choices[0].message.content)
-    print(conversation.history)
 
-    total_tokens = conversation.get_total_tokens()
-    
+    #total_tokens = conversation.get_total_tokens()
+    conversation.check_token_threshold(client)
     
     return response.choices[0].message.content
 
 def refresh_chat():
     conversation.clear()
-    print(conversation.get_total_tokens())
