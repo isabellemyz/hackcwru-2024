@@ -1,4 +1,7 @@
 import tiktoken
+from log_setup import get_logger
+
+logger = get_logger()
 
 # Initialize encoder
 enc = tiktoken.encoding_for_model("gpt-3.5-turbo")
@@ -21,14 +24,14 @@ class Conversation:
         self.total_tokens = len(enc.encode(self.history[0]["content"]))
         
     def get_total_tokens(self):
-        print("curr tokens", self.total_tokens)
+        logger.debug(f"Current tokens: {self.total_tokens}")
         return self.total_tokens
 
     def summarize_conversation(self, client):
         # Create a prompt from the conversation history
         prompt = "\n".join([f"{msg['role']}: {msg['content']}" for msg in self.history])
         
-        print("Prompt",prompt)
+        logger.debug(f"Prompt: {prompt}")
         # Ask the model for a summary
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -48,6 +51,7 @@ class Conversation:
         self.add_message("assistant", summary)
         
         return summary
+
 
     def check_token_threshold(self, client):
         if self.total_tokens >= self.token_threshold:

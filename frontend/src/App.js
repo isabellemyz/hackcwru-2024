@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import ChatInterface from "./components/ChatInterface";
 import AudioRecorder from "./components/AudioRecorder";
 import './App.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "./assets/toastStyles.css";
 
 const App = () => {
   const [messages, setMessages] = useState([]);
@@ -22,6 +25,7 @@ const App = () => {
         <h1 className="text-2xl font-bold">Vocally </h1>
         <ChatInterface messages={messages} />
         <AudioRecorder addMessage={addMessage} clearMessages={clearMessages}/>
+        <ToastContainer />
       </header>
     </div>
   );
