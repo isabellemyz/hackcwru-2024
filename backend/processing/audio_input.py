@@ -3,6 +3,9 @@ import wave
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+from log_setup import get_logger
+
+logger = get_logger()
 
 def record_audio(output_filename, record_seconds=5, sample_rate=44100, chunk=1024):
     # recording logic
@@ -14,7 +17,7 @@ def record_audio(output_filename, record_seconds=5, sample_rate=44100, chunk=102
                     input=True,
                     frames_per_buffer=chunk)
 
-    print("Recording...")
+    logger.debug("Recording...")
 
     frames = []
 
@@ -22,7 +25,7 @@ def record_audio(output_filename, record_seconds=5, sample_rate=44100, chunk=102
         data = stream.read(chunk)
         frames.append(data)
 
-    print("Finished recording.")
+    logger.debug("Finished recording.")
 
     stream.stop_stream()
     stream.close()
