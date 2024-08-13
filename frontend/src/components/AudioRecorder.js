@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from 'react';
 import axios from 'axios';
 import { ReactMediaRecorder } from "react-media-recorder";
-import * as toastConfig from './toastConfig';
+import * as toastConfig from "../utils/toastConfig";
 import { getResponse, getResponseAudio, refresh } from '../utils/AudioHelpers';
 
 const AudioRecorder = ({ addMessage, clearMessages }) => {
