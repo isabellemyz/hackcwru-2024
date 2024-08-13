@@ -1,6 +1,5 @@
 import pyaudio
 import wave
-from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from log_setup import get_logger
@@ -47,4 +46,5 @@ def transcribe_audio(file_path, client):
     with open(file_path, "rb") as audio_file:
         transcription = client.audio.transcriptions.create(model="whisper-1", 
         file=audio_file)
+
     return transcription.text

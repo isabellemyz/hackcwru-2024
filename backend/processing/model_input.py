@@ -46,9 +46,7 @@ def get_response_audio(text, client):
         with open(speech_file_path, "rb") as f:
             audio_data = f.read()
 
-        # os.remove(speech_file_path)
-
-        print("all good")
+        os.remove(speech_file_path)
 
         return audio_data
     except Exception as e:
