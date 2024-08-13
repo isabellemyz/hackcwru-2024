@@ -9,7 +9,6 @@ context_length = 128000
 
 conversation = Conversation()
 
-
 # Function to interact with ChatGPT
 def get_response(user_input, client):
     conversation.add_message("user", user_input)

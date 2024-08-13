@@ -2,6 +2,7 @@ import React, { useState, useEffect }  from 'react';
 import axios from 'axios';
 import { ReactMediaRecorder } from "react-media-recorder";
 import * as toastConfig from './toastConfig';
+import { getResponse, getResponseAudio, refresh } from '../utils/AudioHelpers';
 
 const AudioRecorder = ({ addMessage, clearMessages }) => {
 
@@ -48,41 +49,14 @@ const AudioRecorder = ({ addMessage, clearMessages }) => {
       }
 
       addMessage({ type: 'user', text: transcription });  // Display the transcription in the UI
-      getResponse(transcription);
+      const aiResponse = await getResponse(transcription, addMessage);
+
+      await getResponseAudio(aiResponse, addMessage);
     } catch (error) {
       console.error("Error transcribing audio:", error);
       addMessage({ type: 'bot', text: "Error transcribing audio." });
     }
   };
-
-  // Send the transcribed text to get a response from another server endpoint
-  const getResponse = async (transcription) => {
-    try {
-      const result = await axios.post("http://localhost:8000/get_response", {
-        text: transcription
-      });
-
-      const jsonObject = JSON.parse(result.data.response);
-      const key = Object.keys(jsonObject)[0];
-      const aiResponse = jsonObject[key];
-
-      addMessage({ type: 'bot', text: aiResponse });  // Display the AI response in the UI
-    } catch (error) {
-      console.error("Error getting response:", error);
-      addMessage({ type: 'bot', text: "Error getting response." });
-    }
-  };
-
-  const refresh = async () => {
-    try {
-      await axios.delete("http://localhost:8000/clear_response");
-      clearMessages();
-      addMessage({ type: 'bot', text: "Conversation history has been cleared."});
-    } catch (error) {
-      console.error("Error clearing response:", error);
-      addMessage({ type: 'bot', text: "Error clearing response." });
-    }
-  }
 
   return (
     <ReactMediaRecorder
@@ -92,7 +66,7 @@ const AudioRecorder = ({ addMessage, clearMessages }) => {
           <p>{status}</p>
           <button onClick={startRecording} className="recording-button">Recording</button>
           <button onClick={stopRecording} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2">Stop Recording</button>
-          <button onClick={refresh} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2">Refresh</button>
+          <button onClick={() => refresh(clearMessages, addMessage)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2">Refresh</button>
         </>
       )}
       onStop={handleStop}
