@@ -1,7 +1,6 @@
-from openai import OpenAI
-from dotenv import load_dotenv
 import os
 from processing.conversation import Conversation
+from pathlib import Path
 from log_setup import get_logger
 
 logger = get_logger()
@@ -10,10 +9,8 @@ context_length = 128000
 
 conversation = Conversation()
 
-
 # Function to interact with ChatGPT
 def get_response(user_input, client):
-    # Append the user input to the conversation history
     conversation.add_message("user", user_input)
     logger.debug(f"User: {user_input}")
 
@@ -31,6 +28,29 @@ def get_response(user_input, client):
     conversation.check_token_threshold(client)
     
     return response.choices[0].message.content
+
+def get_response_audio(text, client):
+    try:
+        temp_dir = os.path.join(os.getcwd(), "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+        speech_file_path = Path(temp_dir) / "speech.mp3"
+
+        audio_response = client.audio.speech.create(
+            model="tts-1",
+            voice="nova",
+            input=text
+        )
+
+        audio_response.stream_to_file(speech_file_path)
+
+        with open(speech_file_path, "rb") as f:
+            audio_data = f.read()
+
+        os.remove(speech_file_path)
+
+        return audio_data
+    except Exception as e:
+        raise RuntimeError(f"error generating audio: {str(e)}")
 
 def refresh_chat():
     conversation.clear()

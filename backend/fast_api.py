@@ -1,15 +1,16 @@
 # app/main.py
+from typing import Optional
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-
 from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+import io
 
 from processing.audio_input import record_audio, transcribe_audio
-from processing.model_input import get_response, refresh_chat
+from processing.model_input import get_response, refresh_chat, get_response_audio
 
 load_dotenv()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -20,6 +21,10 @@ class RecordAudioRequest(BaseModel):
     record_seconds: int
     sample_rate: int
     chunk: int
+
+class TTSRequest(BaseModel):
+    text: str
+    voice_name: Optional[str] = "nova"
 
 class AudioOutput(BaseModel): 
     filename: str
@@ -43,7 +48,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this according to your requirements
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -74,6 +79,14 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
 async def get_response_endpoint(request: TextOutput):
     response = get_response(request.text, client)
     return ModelResponse(response=response)
+
+@app.post("/get_response_audio")
+async def get_response_audio_endpoint(request: TTSRequest):
+    try:
+        audio_response = get_response_audio(request.text, client)
+        return StreamingResponse(io.BytesIO(audio_response), media_type="audio/mpeg")
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"message": str(e)})
 
 @app.delete("/clear_response")
 async def clear_response():
