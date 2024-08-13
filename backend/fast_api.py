@@ -1,4 +1,5 @@
 # app/main.py
+from typing import Optional
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +21,10 @@ class RecordAudioRequest(BaseModel):
     record_seconds: int
     sample_rate: int
     chunk: int
+
+class TTSRequest(BaseModel):
+    text: str
+    voice_name: Optional[str] = "nova"
 
 class AudioOutput(BaseModel): 
     filename: str
@@ -76,7 +81,7 @@ async def get_response_endpoint(request: TextOutput):
     return ModelResponse(response=response)
 
 @app.post("/get_response_audio")
-async def get_response_audio_endpoint(request: TextOutput):
+async def get_response_audio_endpoint(request: TTSRequest):
     try:
         audio_response = get_response_audio(request.text, client)
         return StreamingResponse(io.BytesIO(audio_response), media_type="audio/mpeg")
