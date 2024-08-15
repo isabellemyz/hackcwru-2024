@@ -1,42 +1,143 @@
 .App {
-  text-align: center;
-  background-color: white;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  flex-direction: column; 
 }
 
-.App-header {
+/* APP GENERAL LAYOUT */
+.layout-container {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 60px); 
   background-color: white;
-  width: 50%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-top: 60px; 
+}
+
+
+.code-editor {
+  width: 40%;
+}
+
+.chat-section {
+  width: 40%
+}
+
+.interactive-section {
+  width: 20%
+}
+
+.code-editor {
+  width: 40%;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.chat-section {
+  width: 40%;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.interactive-section {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-section {
+  height: 50%;
+  padding: 10px;
+}
+
+.bottom-section {
+  height: 50%;
+  display: flex;
+}
+
+.microphone-section {
+  width: 50%;
+  padding: 10px;
+}
+
+.status-section {
+  width: 50%;
+  padding: 10px;
+}
+
+.box {
+  border: 1px solid #e0e0e0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.box-title {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.box-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+}
+
+
+/* MESSAGES SECTION */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  color: black;
   border-radius: 10px;
   padding: 20px;
 }
 
-.message.user {
-  text-align: left;
-  color: black;
-  background-color: #f1f1f1;
-  padding: 10px;
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message {
+  margin: 10px 0;
+  padding: 15px;
   border-radius: 10px;
-  margin: 5px;
-  max-width: 70%;
+  max-width: 80%;
+}
+
+.message.user {
+  color: black;
+  text-align: left;
   align-self: flex-start;
 }
 
 .message.bot {
-  text-align: right;
-  color: blue;
-  background-color: #e1eaff;
-  padding: 10px;
-  border-radius: 10px;
-  margin: 5px;
-  max-width: 70%;
-  align-self: flex-end;
+  color: black;
+  text-align: left;
+  align-self: flex-start;
 }
+
+.sender {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+  opacity: 0.8;
+}
+
+.message-text {
+  font-size: 16px;
+  font-weight: normal;
+}
+
 
 button {
   margin: 5px;
@@ -51,4 +152,87 @@ button {
   border: none;
   cursor: pointer;
   margin-top: 10px;
+}
+
+/* CAMERA SECTION */
+.camera-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.video-container {
+  width: 100%;
+  height: calc(100% - 50px); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* HEADER SECTION */
+.header {
+  width: 100%;
+  height: 60px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-logo {
+  flex: 1;
+}
+
+.header-logo img {
+  height: 30px; 
+}
+
+.header-title {
+  flex: 2;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.header-placeholder {
+  flex: 1;
+}
+
+
+/* STATUS SECTION */
+.status-container {
+  display: flex;
+  flex-direction: column; /* Align items vertically */
+  align-items: center; /* Center the icons horizontally */
+  gap: 20px; /* Space between icons, adjust as needed */
+}
+
+.status-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.status-item:hover {
+  transform: scale(1.1); /* Slightly enlarge the icon on hover */
+}
+
+.camera-icon {
+  font-size: 100px; /* Adjust the size of the icons */
 }
