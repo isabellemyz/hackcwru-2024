@@ -1,5 +1,4 @@
 import asyncio
-import httpx
 from deepgram import (
     DeepgramClient, DeepgramClientOptions, LiveTranscriptionEvents, LiveOptions
 )

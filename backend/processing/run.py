@@ -1,7 +1,7 @@
 from processing.conversation import Conversation
 from processing.transcribe import Transcription
 import asyncio
-from starlette.websockets import WebSocketDisconnect, WebSocketState
+from starlette.websockets import WebSocketDisconnect
 
 conversation = Conversation()
 

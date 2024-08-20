@@ -1,6 +1,5 @@
 import pyaudio
 import wave
-from dotenv import load_dotenv
 import os
 from log_setup import get_logger
 

@@ -7,12 +7,11 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import io
-import asyncio
 from processing.conversation import Conversation
 from processing.transcribe import Transcription
 from processing.run import Combined
-from processing.audio_input import transcribe_audio_deprecated
-from processing.model_input import get_response_audio, get_response
+from processing.audio_input import transcribe_audio_deprecated, record_audio
+from processing.model_input import get_response_audio, get_response, refresh_chat
 
 load_dotenv()
 api_key = os.environ.get("OPENAI_API_KEY")
