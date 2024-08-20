@@ -1,6 +1,5 @@
-# app/main.py
 from typing import Optional
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -8,9 +7,12 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import io
-
-from processing.audio_input import record_audio, transcribe_audio
-from processing.model_input import get_response, refresh_chat, get_response_audio
+import asyncio
+from processing.conversation import Conversation
+from processing.transcribe import Transcription
+from processing.run import Combined
+from processing.audio_input import transcribe_audio_deprecated
+from processing.model_input import get_response_audio, get_response
 
 load_dotenv()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -69,7 +71,7 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
         with open(file_location, "wb") as buffer:
             buffer.write(file.file.read())
         
-        transcription = transcribe_audio(file_location, client)
+        transcription = transcribe_audio_deprecated(file_location, client)
         os.remove(file_location)
         return TranscriptionResponse(transcription=transcription)
     except Exception as e:
@@ -87,6 +89,18 @@ async def get_response_audio_endpoint(request: TTSRequest):
         return StreamingResponse(io.BytesIO(audio_response), media_type="audio/mpeg")
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": str(e)})
+
+@app.websocket("/listen")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    conversation = Conversation()
+    transcription = Transcription(websocket, conversation)
+    combined = Combined(websocket, conversation, transcription)
+    
+    try:
+        await combined.run(client=client) 
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 @app.delete("/clear_response")
 async def clear_response():

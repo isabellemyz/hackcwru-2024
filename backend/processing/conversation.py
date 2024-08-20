@@ -56,3 +56,20 @@ class Conversation:
     def check_token_threshold(self, client):
         if self.total_tokens >= self.token_threshold:
             self.summarize_conversation(client)
+        
+    def get_response(self, user_input, client):
+        logger.debug(f"User: {user_input}")
+
+        # Call the OpenAI API with the conversation history
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=self.history,
+            response_format={ "type": "json_object" } # this makes it return only one JSON key-value
+        )
+
+        logger.debug(f"Model answer: {response.choices[0].message.content}")
+
+        #total_tokens = conversation.get_total_tokens()
+        self.check_token_threshold(client)
+        
+        return response.choices[0].message.content

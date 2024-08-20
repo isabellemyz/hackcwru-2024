@@ -42,7 +42,7 @@ def record_audio(output_filename, record_seconds=5, sample_rate=44100, chunk=102
         wf.setframerate(sample_rate)
         wf.writeframes(b''.join(frames))
 
-def transcribe_audio(file_path, client):
+def transcribe_audio_deprecated(file_path, client):
     with open(file_path, "rb") as audio_file:
         transcription = client.audio.transcriptions.create(model="whisper-1", 
         file=audio_file)

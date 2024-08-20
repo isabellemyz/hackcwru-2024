@@ -69,13 +69,14 @@
 }
 
 .box {
-  border: 1px solid #e0e0e0;
+  border: 1.5px solid #e0e0e0;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .box-title {
+  font-size: 15px;
   text-align: center;
   font-weight: bold;
   padding: 10px;
@@ -104,6 +105,7 @@
 .chat-box {
   flex: 1;
   overflow-y: auto;
+  padding: 20px;
 }
 
 .message {
@@ -129,6 +131,7 @@
   font-size: 12px;
   font-weight: bold;
   margin-bottom: 5px;
+  margin-top: 15px;
   display: block;
   opacity: 0.8;
 }

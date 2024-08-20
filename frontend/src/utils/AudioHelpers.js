@@ -19,7 +19,7 @@ export const getResponse = async (transcription, addMessage) => {
     }
 };
 
-export const getResponseAudio = async (text_response, addMessage) => {
+export const getResponseAudio = async (text_response) => {
     try {
         const result = await axios.post("http://localhost:8000/get_response_audio", {
             text: text_response
@@ -34,7 +34,6 @@ export const getResponseAudio = async (text_response, addMessage) => {
         audio.play();
     } catch (error) {
         console.error("Error getting audio from model response:", error);
-        addMessage({ type: 'bot', text: "Error getting audio response from model"});
     }
 }
 

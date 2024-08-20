@@ -38,7 +38,8 @@ def get_response_audio(text, client):
         audio_response = client.audio.speech.create(
             model="tts-1",
             voice="nova",
-            input=text
+            input=text, 
+            speed= 1.3,
         )
 
         audio_response.stream_to_file(speech_file_path)

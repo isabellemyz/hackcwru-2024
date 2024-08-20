@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import ChatInterface from "./components/ChatInterface";
 import AudioRecorder from "./components/AudioRecorder";
 import './App.css';
@@ -7,17 +7,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from "./components/Header";
 import Status from "./components/Status";
 import Camera from "./components/Camera";
+import conversationReducer from './components/ConversationReducer';
 import 'react-toastify/dist/ReactToastify.css';
 import "./assets/toastStyles.css";
 
+const initialConversation = { messages: [], finalTranscripts: [], interimTranscript: '' };
+
 const App = () => {
   const [messages, setMessages] = useState([]);
+  const [conversation, dispatch] = useReducer(conversationReducer, initialConversation);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
-
-// Function to add messages to the state
-  const addMessage = (msg) => {
-    setMessages(prevMessages => [...prevMessages, msg]);
-  };
+  const currentTranscript = [...conversation.finalTranscripts, conversation.interimTranscript].join(' ');
 
   const clearMessages = () => {
     setMessages([]);
@@ -41,7 +43,10 @@ const App = () => {
           <div className="box">
             <div className="box-title">Chat</div>
             <div className="box-content">
-              <ChatInterface messages={messages} />
+            <ChatInterface
+              conversation={conversation}
+              currentTranscript = {currentTranscript}
+            />
             </div>
           </div>
         </div>
@@ -59,7 +64,14 @@ const App = () => {
               <div className="box">
                 <div className="box-title">Microphone</div>
                 <div className="box-content">
-                  <AudioRecorder addMessage={addMessage} clearMessages={clearMessages} />
+                <AudioRecorder 
+                  clearMessages={clearMessages}
+                  isRunning={isRunning}
+                  setIsRunning={setIsRunning}
+                  isListening={isListening}
+                  setIsListening={setIsListening}
+                  dispatch={dispatch}  
+                />
                 </div>
               </div>
             </div>
@@ -77,7 +89,6 @@ const App = () => {
       <ToastContainer />
     </div>
   );
-};
+}
 
 export default App;
-
