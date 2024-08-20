@@ -10,6 +10,7 @@ class Combined:
         self.websocket = websocket
         self.conversation = conversation
         self.transcription = Transcription(websocket, conversation)
+        self.websocket_closed = False
     
     async def transcribe_audio(self):
         await self.transcription.transcribe_audio()
@@ -24,5 +25,8 @@ class Combined:
                 tg.create_task(self.manage_conversation(client))
         except* WebSocketDisconnect:
             print('Client disconnected')
+            self.websocket_closed = True
         finally:
-            await self.transcription.websocket.close()
+            if not self.websocket_closed:
+                self.websocket_closed = True
+                await self.transcription.websocket.close()
